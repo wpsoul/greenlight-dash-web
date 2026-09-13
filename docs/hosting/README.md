@@ -1,7 +1,7 @@
 # Where to host GreenLight Dash Server
 
 The server is one long-running Linux container with a persistent disk: a Python API,
-SQLite, your media, ffmpeg, and (full image) headless Chromium plus the agent runner.
+SQLite, your media, ffmpeg, and (full image) headless Chromium.
 That rules out platforms built for static sites and short-lived functions.
 
 | Host | Status | Notes |
@@ -15,7 +15,7 @@ That rules out platforms built for static sites and short-lived functions.
 | Shared PHP hosting (cPanel, Plesk shared plans) | Not possible | No Docker, no long-running processes. |
 
 Sizing: the `core` image (browser app + agent API) runs on 2 vCPU / 4 GB. Server rendering
-and the bundled runner (full image) want 4 vCPU / 8 GB; on a CPU-only host a 30-second
+(render image) wants 4 vCPU / 8 GB; on a CPU-only host a 30-second
 1080p effect-heavy clip takes minutes. Disk: your media plus renders — start at 50 GB.
 
 Whatever the host: TLS in front, the app bound to the host's private network only, a
