@@ -1,0 +1,111 @@
+# GreenLight Dash Server
+
+> Self-hosting package for GreenLight Dash Server: the Compose file, environment template and docs.
+> The application image is published at `ghcr.io/wpsoul/greenlight-dash`; this repository carries no application source.
+
+The self-hosted web app: your boards, media and video editor on your own Linux server,
+opened from a browser, with AI agents working in the same workspace through the API.
+One owner per installation. Data never leaves your server unless you configure a
+provider.
+
+## Quickstart (Docker Compose, ~5 minutes)
+
+Requirements: a Linux host with Docker Compose, 2 vCPU / 4 GB (4 vCPU / 8 GB for
+server-side rendering), a hostname with TLS in front (Caddy, Traefik, or your
+platform's proxy).
+
+```bash
+mkdir greenlight && cd greenlight
+curl -fsSLO https://raw.githubusercontent.com/wpsoul/greenlight-dash-web/main/docker-compose.yml
+curl -fsSL  https://raw.githubusercontent.com/wpsoul/greenlight-dash-web/main/env.example -o .env
+# 1. owner password → paste the printed scrypt$… line into .env as GL_AUTH_PASSWORD_HASH
+docker compose run --rm -i greenlight hash-password
+# 2. set GL_INSTANCE_URL (https://boards.example.com) and GL_PREVIEW_ORIGIN (https://preview.boards.example.com)
+# 3. start
+docker compose up -d
+```
+
+Put TLS in front of `127.0.0.1:8080`. Caddyfile:
+
+```
+boards.example.com, preview.boards.example.com {
+    reverse_proxy 127.0.0.1:8080
+}
+```
+
+`preview.boards.example.com` is a second hostname for the same container: HTML
+cards are shown from it so a card's script can never act as you (it runs with no
+session, on an opaque origin). Without `GL_PREVIEW_ORIGIN` the server still works
+and `Settings ▸ Server` reports preview isolation as off.
+
+## Profiles
+
+| `GL_PROFILE` | What you get |
+| --- | --- |
+| `core` | Browser app, owner login, agent API tokens, boards, media, HTML, video editor with export in your browser, AI providers with your keys |
+| `render` | + server-side rendering (headless Chromium, ffmpeg): stills, previews and final videos for agents |
+| `full` (default) | + the bundled agent runner: assign a brief on a board, close the browser, come back to an editable project and a rendered video |
+
+Two images: the full one (`ghcr.io/wpsoul/greenlight-dash:<version>`, ~4.3 GB, Chromium + Claude Code) and
+a `core` one (`ghcr.io/wpsoul/greenlight-dash:<version>-core`, ~1.5 GB) for browser-only use with external
+agents.
+
+Rendering works on a CPU-only server (open-source Chromium, frames encoded by
+ffmpeg). Expect minutes, not seconds, for effect-heavy 1080p on a small VPS.
+
+## Agents
+
+- **External agents** (Claude Code with the `greenlight-dash` skill, or any HTTP
+  client): create a token in `Settings ▸ API Keys ▸ Server`, then send
+  `Authorization: Bearer <token>` on every request to `https://boards.example.com/api/…`.
+  Long operations are jobs: `GET /api/jobs?active=true`, `DELETE /api/jobs/{id}`,
+  `POST /api/jobs/download`.
+- **Bundled runner** (`GL_PROFILE=full`): needs credentials for Claude Code inside the
+  container, ONE of `GL_RUNNER_CLAUDE_OAUTH_TOKEN` (run `claude setup-token` on a machine
+  where Claude Code is logged in; uses your subscription) or
+  `GL_RUNNER_ANTHROPIC_API_KEY` (console.anthropic.com, pay per use). The token is only
+  ever given to the runner process. Limits: `GL_RUNNER_MAX_TURNS` (80),
+  `GL_RUNNER_TIMEOUT_SEC` (3600), `GL_RUNNER_ALLOWED_TOOLS`.
+
+## Security model
+
+- Owner password (scrypt), HttpOnly session cookie bound to the instance hostname,
+  CSRF header on writes, bearer tokens for agents, login rate limit.
+- Default-deny route policy: desktop-only routes (host paths, native apps, terminal,
+  Telegram, sounds) do not exist on a server.
+- Outbound policy at connect time: private, loopback, link-local and metadata
+  addresses are refused for every fetch and for yt-dlp/curl through an internal
+  egress proxy. `GL_OUTBOUND_ALLOW_HOSTS` allow-lists internal providers.
+- Chromium runs with `--no-sandbox` inside the container (Docker's seccomp blocks its
+  user-namespace sandbox); the container itself is non-root with
+  `no-new-privileges`.
+
+## Backup, restore, upgrade
+
+- Online backup: `POST /api/admin/backup` with the owner
+  session: writes pause for a few seconds, the SQLite backup API snapshots the DB and
+  the durable directories are archived to `/data/backups/…tar.gz`. Download via
+  `GET /api/admin/backups/<name>`.
+- Offline: stop the container, `docker compose run --rm greenlight backup /data/backups/manual.tar.gz`.
+- Restore into an EMPTY volume: `docker compose run --rm greenlight restore /data/backups/<file>.tar.gz`
+  (mount the archive inside `/data` first). Restore never overwrites a live root.
+- Upgrade: back up, change the image tag, `docker compose up -d`. A data root written by
+  a newer server refuses to start on an older image.
+- Health: `GET /health` (public), `GET /api/ready` (authenticated diagnostics).
+  Uploads, downloads, renders and tasks return 507 below `GL_MIN_FREE_BYTES` (1 GiB).
+
+## Licence
+
+Free core. PRO features (AI wizards, server rendering, the bundled runner) validate a
+`GL_LICENSE_KEY` against greenlightdash.pro at start and daily, with a 7-day offline
+grace; until enforcement is switched on (`GL_PRO_ENFORCE=1`) the licence state is only
+reported.
+
+## Troubleshooting
+
+- `docker compose logs -f greenlight` shows startup; `/data/logs/server.log` the app log.
+- "refusing to start": a required variable is missing; the message names it.
+- Renders fail on a CPU host: check `/api/ready` → `chromium`; mount a 1 GB `shm_size`.
+- Agent task `needs_attention` / `failed: no credentials`: set a runner credential.
+- Behind Cloudflare/other proxies set `GL_TRUSTED_PROXIES` to the proxy's network so
+  rate limits see real client addresses.

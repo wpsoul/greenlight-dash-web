@@ -1,0 +1,8 @@
+# Caddy in front of GreenLight Dash Server (TLS by Let's Encrypt).
+# The second hostname serves isolated HTML card previews from the same container.
+boards.example.com, preview.boards.example.com {
+    reverse_proxy 127.0.0.1:8080
+    request_body {
+        max_size 8GB
+    }
+}
