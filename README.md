@@ -61,11 +61,17 @@ ffmpeg). Expect minutes, not seconds, for effect-heavy 1080p on a small VPS.
 
 ## Agents
 
-- **External agents** (Claude Code with the `greenlight-dash` skill, or any HTTP
-  client): create a token in `Settings ▸ API Keys ▸ Server`, then send
-  `Authorization: Bearer <token>` on every request to `https://boards.example.com/api/…`.
-  Long operations are jobs: `GET /api/jobs?active=true`, `DELETE /api/jobs/{id}`,
-  `POST /api/jobs/download`.
+- **External agents** are the way to work with agents on the web version: there is no
+  terminal in the browser. Open **GLAI** (board) or **GLEA** (video editor / mockups) in
+  the header and pick Claude Code, Codex, Gemini CLI or OpenCode: the connection modal
+  mints an API token (owner password), downloads the bundled `greenlight-dash` skill
+  and shows one copyable block to run on your own computer —
+  `export GREENLIGHT_API_BASE_URL=…`, `export GREENLIGHT_API_TOKEN=glt_…`, the skill
+  download (`GET /api/agent-skills/greenlight-dash.zip`) and the launch command. Any
+  HTTP client works the same way: `Authorization: Bearer <token>` on every request to
+  `https://boards.example.com/api/…`. Tokens are listed and revoked in
+  `Settings ▸ API Keys ▸ Server`. Long operations are jobs: `GET /api/jobs?active=true`,
+  `DELETE /api/jobs/{id}`, `POST /api/jobs/download`.
 - **Bundled runner** (`GL_PROFILE=full`): needs credentials for Claude Code inside the
   container, ONE of `GL_RUNNER_CLAUDE_OAUTH_TOKEN` (run `claude setup-token` on a machine
   where Claude Code is logged in; uses your subscription) or
