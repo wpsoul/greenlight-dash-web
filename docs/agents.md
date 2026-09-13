@@ -1,26 +1,36 @@
 # Agents on GreenLight Dash Server
 
-## External agents (Claude Code, scripts)
+The web version has no terminal and runs no agent itself. Agents run on your own computer
+and connect to the instance through the API — the same GLAI (board) and GLEA (video editor,
+mockups) you know from the desktop app, just started by you instead of by the app.
 
-1. In the app: `Settings ▸ API Keys ▸ Server ▸ Agent tokens ▸ Create`. Copy the token once.
-2. Give the agent two environment variables:
+## Connect an agent (in the app)
 
-       GREENLIGHT_API_BASE_URL=https://boards.example.com
-       GREENLIGHT_API_TOKEN=glt_…
+1. Open **GLAI** in the board header, or **GLEA** in the video editor / mockup generator,
+   and pick your agent: Claude Code CLI, Codex, Gemini CLI or OpenCode.
+2. The connection guide mints an API token (it asks for the owner password; the token is
+   shown once) or accepts one you already have.
+3. Copy the block it shows and run it in a terminal on your computer:
 
-3. Every request carries `Authorization: Bearer $GREENLIGHT_API_TOKEN`. The `greenlight-dash` skill
-   (shipped with the desktop app and inside the server image) documents the endpoints.
+       export GREENLIGHT_API_BASE_URL="https://boards.example.com"
+       export GREENLIGHT_API_TOKEN="glt_…"
+       mkdir -p "$HOME/greenlight-skills" && curl -fsSL -H "Authorization: Bearer $GREENLIGHT_API_TOKEN" \
+         "$GREENLIGHT_API_BASE_URL/api/agent-skills/greenlight-dash.zip" -o "$HOME/greenlight-skills/greenlight-dash.zip" \
+         && unzip -oq "$HOME/greenlight-skills/greenlight-dash.zip" -d "$HOME/greenlight-skills"
+       claude --dangerously-skip-permissions "You are GLAI - GreenLight Dash AI agent. Use skill $HOME/greenlight-skills/greenlight-dash/SKILL.md."
 
-Long operations are jobs: `GET /api/jobs?active=true`, `DELETE /api/jobs/{id}` cancels,
-`POST /api/jobs/download` downloads in the background.
+   The first two lines can live in your shell profile; after that only the last line is
+   needed. Needs `curl` and `unzip` (Git Bash or WSL on Windows).
+4. Work as on the desktop: "add the uploaded images as a grid", "make a 10-second promo and
+   render it". Uploads go through the API, renders run on the server, results appear on the
+   board while you watch.
 
-## The bundled runner (`GL_PROFILE=full`)
+Tokens are listed and revoked in `Settings ▸ API Keys ▸ Server`. The desktop app needs no
+token: its local backend has no login.
 
-Assign a brief on a board (header ▸ Agent tasks). The server runs Claude Code in a scratch
-workspace with a task-scoped token, verifies the outcome on the board (an editable project and a
-completed render) and marks the task completed or needs-attention. Credentials, ONE of:
+## Any HTTP client
 
-- `GL_RUNNER_CLAUDE_OAUTH_TOKEN` — run `claude setup-token` where Claude Code is logged in.
-- `GL_RUNNER_ANTHROPIC_API_KEY` — an API key from console.anthropic.com.
-
-Budgets: `GL_RUNNER_MAX_TURNS` (80), `GL_RUNNER_TIMEOUT_SEC` (3600), `GL_RUNNER_ALLOWED_TOOLS`.
+Every request carries `Authorization: Bearer $GREENLIGHT_API_TOKEN`. The `greenlight-dash`
+skill (`GET /api/agent-skills/greenlight-dash.zip`, also shipped with the desktop app)
+documents the endpoints. Long operations are jobs: `GET /api/jobs?active=true`,
+`DELETE /api/jobs/{id}` cancels, `POST /api/jobs/download` downloads in the background.
