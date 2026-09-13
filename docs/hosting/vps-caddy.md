@@ -10,7 +10,7 @@
    curl -fsSLO https://raw.githubusercontent.com/wpsoul/greenlight-dash-web/main/docker-compose.yml
    curl -fsSL  https://raw.githubusercontent.com/wpsoul/greenlight-dash-web/main/env.example -o .env
    docker compose run --rm -i greenlight hash-password    # paste the scrypt$… line into .env
-   nano .env                                              # GL_INSTANCE_URL, GL_PREVIEW_ORIGIN, GL_AUTH_PASSWORD_HASH, runner credential
+   nano .env                                              # GL_INSTANCE_URL, GL_PREVIEW_ORIGIN, GL_AUTH_PASSWORD_HASH
    mkdir -p data && sudo chown 1000:1000 data             # the container runs as uid 1000
    docker compose up -d
    ```
