@@ -10,14 +10,12 @@ services:
       GL_DEPLOY_MODE: selfhosted
       GL_DATA_ROOT: /data
       PORT: "8080"
-      GL_PROFILE: ${GL_PROFILE:-full}
+      GL_PROFILE: ${GL_PROFILE:-render}
       GL_INSTANCE_URL: ${GL_INSTANCE_URL:?set the public https URL of this server}
       GL_PREVIEW_ORIGIN: ${GL_PREVIEW_ORIGIN:-}
       GL_AUTH_PASSWORD_HASH: ${GL_AUTH_PASSWORD_HASH:?run: docker compose run --rm -i greenlight hash-password}
       GL_SESSION_SECRET: ${GL_SESSION_SECRET:-}
       GL_TRUSTED_PROXIES: ${GL_TRUSTED_PROXIES:-172.16.0.0/12}
-      GL_RUNNER_ANTHROPIC_API_KEY: ${GL_RUNNER_ANTHROPIC_API_KEY:-}
-      GL_RUNNER_CLAUDE_OAUTH_TOKEN: ${GL_RUNNER_CLAUDE_OAUTH_TOKEN:-}
       GL_CHROMIUM_NO_SANDBOX: "1"   # Docker's default seccomp profile blocks Chromium's user-namespace sandbox
       GL_LICENSE_KEY: ${GL_LICENSE_KEY:-}
     init: true
