@@ -3,7 +3,7 @@
 ```bash
 fly launch --no-deploy --image ghcr.io/wpsoul/greenlight-dash:<version> --name my-greenlight
 fly volumes create greenlight_data --size 50 --region <region>
-fly secrets set GL_AUTH_PASSWORD_HASH='scrypt$…' GL_RUNNER_CLAUDE_OAUTH_TOKEN='…'
+fly secrets set GL_AUTH_PASSWORD_HASH='scrypt$…'
 fly deploy
 ```
 
