@@ -52,7 +52,7 @@ Workers/Pages cannot run a persistent server with a disk.
 | `render` (default) | + server-side rendering (headless Chromium, ffmpeg): stills, previews and final videos for agents |
 | `full` | accepted alias of `render` (kept for existing configs) |
 
-Two images: the full one (`ghcr.io/wpsoul/greenlight-dash:<version>`, ~4.3 GB, Chromium) and
+Two images: the full one (`ghcr.io/wpsoul/greenlight-dash:<version>`, ~1 GB, Chromium) and
 a `core` one (`ghcr.io/wpsoul/greenlight-dash:<version>-core`, ~1.5 GB) for browser-only use with external
 agents.
 
