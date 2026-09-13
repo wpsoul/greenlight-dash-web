@@ -49,10 +49,10 @@ Workers/Pages cannot run a persistent server with a disk.
 | `GL_PROFILE` | What you get |
 | --- | --- |
 | `core` | Browser app, owner login, agent API tokens, boards, media, HTML, video editor with export in your browser, AI providers with your keys |
-| `render` | + server-side rendering (headless Chromium, ffmpeg): stills, previews and final videos for agents |
-| `full` (default) | + the bundled agent runner: assign a brief on a board, close the browser, come back to an editable project and a rendered video |
+| `render` (default) | + server-side rendering (headless Chromium, ffmpeg): stills, previews and final videos for agents |
+| `full` | accepted alias of `render` (kept for existing configs) |
 
-Two images: the full one (`ghcr.io/wpsoul/greenlight-dash:<version>`, ~4.3 GB, Chromium + Claude Code) and
+Two images: the full one (`ghcr.io/wpsoul/greenlight-dash:<version>`, ~4.3 GB, Chromium) and
 a `core` one (`ghcr.io/wpsoul/greenlight-dash:<version>-core`, ~1.5 GB) for browser-only use with external
 agents.
 
@@ -72,12 +72,6 @@ ffmpeg). Expect minutes, not seconds, for effect-heavy 1080p on a small VPS.
   `https://boards.example.com/api/…`. Tokens are listed and revoked in
   `Settings ▸ API Keys ▸ Server`. Long operations are jobs: `GET /api/jobs?active=true`,
   `DELETE /api/jobs/{id}`, `POST /api/jobs/download`.
-- **Bundled runner** (`GL_PROFILE=full`): needs credentials for Claude Code inside the
-  container, ONE of `GL_RUNNER_CLAUDE_OAUTH_TOKEN` (run `claude setup-token` on a machine
-  where Claude Code is logged in; uses your subscription) or
-  `GL_RUNNER_ANTHROPIC_API_KEY` (console.anthropic.com, pay per use). The token is only
-  ever given to the runner process. Limits: `GL_RUNNER_MAX_TURNS` (80),
-  `GL_RUNNER_TIMEOUT_SEC` (3600), `GL_RUNNER_ALLOWED_TOOLS`.
 
 ## Security model
 
@@ -110,7 +104,7 @@ ffmpeg). Expect minutes, not seconds, for effect-heavy 1080p on a small VPS.
 
 The same licence and the same gates as the desktop app: free by default, and the
 features that are PRO on the desktop (AI Shorts, PRO effects and templates, Telegram,
-the GLAI/GLEA agents) are PRO here. Server rendering and the bundled runner are not
+the GLAI/GLEA agents) are PRO here. Server rendering is not
 gated. A `GL_LICENSE_KEY` is validated against greenlightdash.pro at start and daily,
 with a 7-day offline grace.
 
@@ -119,6 +113,5 @@ with a 7-day offline grace.
 - `docker compose logs -f greenlight` shows startup; `/data/logs/server.log` the app log.
 - "refusing to start": a required variable is missing; the message names it.
 - Renders fail on a CPU host: check `/api/ready` → `chromium`; mount a 1 GB `shm_size`.
-- Agent task `needs_attention` / `failed: no credentials`: set a runner credential.
 - Behind Cloudflare/other proxies set `GL_TRUSTED_PROXIES` to the proxy's network so
   rate limits see real client addresses.
