@@ -27,5 +27,3 @@ services:
         sync: false
       - key: GL_AUTH_PASSWORD_HASH
         sync: false
-      - key: GL_RUNNER_CLAUDE_OAUTH_TOKEN
-        sync: false
