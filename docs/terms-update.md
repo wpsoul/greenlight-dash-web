@@ -35,7 +35,7 @@ keeps them on your server. We do not receive, store or process your content.
 
 ## Third-party services and keys
 
-Image, video and audio generation, transcription, the AI agent runner, sharing and
+Image, video and audio generation, transcription, sharing and
 collaboration use third-party services (AI providers, Anthropic, Cloudflare) with **your
 own accounts and keys**. Your use of those services is governed by each provider's terms
 and you are responsible for their costs, for the outputs, and for keeping your keys safe.
