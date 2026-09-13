@@ -2,10 +2,10 @@
 
 - **Vercel / Netlify / Cloudflare Pages** host static files and short serverless
   functions. The server is a persistent Python process with SQLite on disk, background
-  jobs, WebSockets and, in the full image, a headless Chromium and an agent runner. None
+  jobs, WebSockets and, in the full image, a headless Chromium. None
   of that fits a function runtime, and there is no persistent disk.
 - **Cloudflare Workers / Containers**: Workers are JavaScript isolates; Cloudflare
-  Containers have no persistent volume and no GPU, and the runner needs Node + Chromium
+  Containers have no persistent volume and no GPU, and server rendering needs a headless Chromium
   inside one long-lived container.
 - **GitHub Pages**: static only.
 - **Shared PHP hosting**: no Docker, no long-running processes.
