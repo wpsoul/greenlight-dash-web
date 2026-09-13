@@ -105,8 +105,12 @@ ffmpeg). Expect minutes, not seconds, for effect-heavy 1080p on a small VPS.
 The same licence and the same gates as the desktop app: free by default, and the
 features that are PRO on the desktop (AI Shorts, PRO effects and templates, Telegram,
 the GLAI/GLEA agents) are PRO here. Server rendering is not
-gated. A `GL_LICENSE_KEY` is validated against greenlightdash.pro at start and daily,
-with a 7-day offline grace.
+gated. Activate in the app (header ▸ Account ▸ "Already have a License Key?": key +
+email, owner session) — the key is stored under `/data/secrets` — or set `GL_LICENSE_KEY`
+(and `GL_LICENSE_EMAIL`) on the server, which then manages it. Either way it is validated
+against greenlightdash.pro at activation and daily, with a 7-day offline grace. One
+activation per domain: the instance id derives from the hostname, so a redeploy on the
+same domain reuses its activation.
 
 ## Troubleshooting
 
