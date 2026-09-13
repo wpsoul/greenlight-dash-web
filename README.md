@@ -38,6 +38,12 @@ cards are shown from it so a card's script can never act as you (it runs with no
 session, on an opaque origin). Without `GL_PREVIEW_ORIGIN` the server still works
 and `Settings ▸ Server` reports preview isolation as off.
 
+## Hosting
+
+See [docs/hosting](docs/hosting/README.md): a Linux VPS with Docker + Caddy is recommended;
+Coolify/Dokploy, Railway, Fly.io and Render are prepared; Vercel, Netlify and Cloudflare
+Workers/Pages cannot run a persistent server with a disk.
+
 ## Profiles
 
 | `GL_PROFILE` | What you get |
@@ -96,10 +102,11 @@ ffmpeg). Expect minutes, not seconds, for effect-heavy 1080p on a small VPS.
 
 ## Licence
 
-Free core. PRO features (AI wizards, server rendering, the bundled runner) validate a
-`GL_LICENSE_KEY` against greenlightdash.pro at start and daily, with a 7-day offline
-grace; until enforcement is switched on (`GL_PRO_ENFORCE=1`) the licence state is only
-reported.
+The same licence and the same gates as the desktop app: free by default, and the
+features that are PRO on the desktop (AI Shorts, PRO effects and templates, Telegram,
+the GLAI/GLEA agents) are PRO here. Server rendering and the bundled runner are not
+gated. A `GL_LICENSE_KEY` is validated against greenlightdash.pro at start and daily,
+with a 7-day offline grace.
 
 ## Troubleshooting
 

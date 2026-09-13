@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: greenlight-dash
+    runtime: image
+    image:
+      url: ghcr.io/wpsoul/greenlight-dash:10.9.2
+    plan: pro
+    healthCheckPath: /health
+    disk:
+      name: greenlight-data
+      mountPath: /data
+      sizeGB: 50
+    envVars:
+      - key: GL_DEPLOY_MODE
+        value: selfhosted
+      - key: GL_DATA_ROOT
+        value: /data
+      - key: GL_PROFILE
+        value: full
+      - key: PORT
+        value: "8080"
+      - key: GL_CHROMIUM_NO_SANDBOX
+        value: "1"
+      - key: GL_INSTANCE_URL
+        sync: false
+      - key: GL_PREVIEW_ORIGIN
+        sync: false
+      - key: GL_AUTH_PASSWORD_HASH
+        sync: false
+      - key: GL_RUNNER_CLAUDE_OAUTH_TOKEN
+        sync: false

@@ -1,0 +1,35 @@
+app = "my-greenlight"
+primary_region = "ams"
+
+[build]
+  image = "ghcr.io/wpsoul/greenlight-dash:10.9.2"
+
+[env]
+  GL_DEPLOY_MODE = "selfhosted"
+  GL_DATA_ROOT = "/data"
+  GL_PROFILE = "full"
+  PORT = "8080"
+  GL_INSTANCE_URL = "https://my-greenlight.fly.dev"
+  GL_PREVIEW_ORIGIN = "https://preview.my-greenlight.example.com"
+  GL_TRUSTED_PROXIES = "172.16.0.0/12"
+  GL_CHROMIUM_NO_SANDBOX = "1"
+
+[mounts]
+  source = "greenlight_data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+  [http_service.checks.health]
+    path = "/health"
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "60s"
+
+[[vm]]
+  size = "performance-2x"
+  memory = "8gb"
