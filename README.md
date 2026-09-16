@@ -18,9 +18,12 @@ platform's proxy).
 mkdir greenlight && cd greenlight
 curl -fsSLO https://raw.githubusercontent.com/wpsoul/greenlight-dash-web/main/docker-compose.yml
 curl -fsSL  https://raw.githubusercontent.com/wpsoul/greenlight-dash-web/main/env.example -o .env
-# 1. owner password → paste the printed scrypt$… line into .env as GL_AUTH_PASSWORD_HASH
-docker compose run --rm -i greenlight hash-password
-# 2. set GL_INSTANCE_URL (https://boards.example.com) and GL_PREVIEW_ORIGIN (https://preview.boards.example.com)
+# 1. pin the image and set GL_INSTANCE_URL in .env
+#    (GL_PREVIEW_ORIGIN too — a second hostname on the same container)
+# 2. owner password → paste the printed scrypt$… line into .env as GL_AUTH_PASSWORD_HASH.
+#    Straight `docker run`, because Compose refuses to run anything until .env
+#    already carries the hash this command produces.
+docker run --rm -i ghcr.io/wpsoul/greenlight-dash:<version> hash-password
 # 3. start
 docker compose up -d
 ```

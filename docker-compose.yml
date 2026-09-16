@@ -1,7 +1,7 @@
 # GreenLight Dash Server — single-owner install. See docker/env.example (copy to docker/.env).
 services:
   greenlight:
-    image: ${GREENLIGHT_IMAGE:?pin the image, e.g. ghcr.io/wpsoul/greenlight-dash:10.9.52}
+    image: "${GREENLIGHT_IMAGE:?pin the image, e.g. ghcr.io/wpsoul/greenlight-dash:10.9.52}"
     ports:
       - "127.0.0.1:8080:8080"
     volumes:
@@ -10,9 +10,11 @@ services:
       GL_DEPLOY_MODE: selfhosted
       GL_DATA_ROOT: /data
       PORT: "8080"
-      GL_INSTANCE_URL: ${GL_INSTANCE_URL:?set the public https URL of this server}
+      GL_INSTANCE_URL: "${GL_INSTANCE_URL:?set the public https URL of this server}"
       GL_PREVIEW_ORIGIN: ${GL_PREVIEW_ORIGIN:-}
-      GL_AUTH_PASSWORD_HASH: ${GL_AUTH_PASSWORD_HASH:?run: docker compose run --rm -i greenlight hash-password}
+      # Quoted: an unquoted ":" inside the default makes this a nested mapping and
+      # the whole file fails to parse.
+      GL_AUTH_PASSWORD_HASH: "${GL_AUTH_PASSWORD_HASH:?generate it with the hash-password command, see the README}"
       GL_SESSION_SECRET: ${GL_SESSION_SECRET:-}
       GL_TRUSTED_PROXIES: ${GL_TRUSTED_PROXIES:-172.16.0.0/12}
       GL_CHROMIUM_NO_SANDBOX: "1"   # Docker's default seccomp profile blocks Chromium's user-namespace sandbox
