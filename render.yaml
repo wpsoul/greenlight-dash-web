@@ -15,8 +15,6 @@ services:
         value: selfhosted
       - key: GL_DATA_ROOT
         value: /data
-      - key: GL_PROFILE
-        value: full
       - key: PORT
         value: "8080"
       - key: GL_CHROMIUM_NO_SANDBOX

@@ -7,7 +7,6 @@ primary_region = "ams"
 [env]
   GL_DEPLOY_MODE = "selfhosted"
   GL_DATA_ROOT = "/data"
-  GL_PROFILE = "full"
   PORT = "8080"
   GL_INSTANCE_URL = "https://my-greenlight.fly.dev"
   GL_PREVIEW_ORIGIN = "https://preview.my-greenlight.example.com"

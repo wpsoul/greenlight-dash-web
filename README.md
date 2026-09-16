@@ -44,17 +44,16 @@ See [docs/hosting](docs/hosting/README.md): a Linux VPS with Docker + Caddy is r
 Coolify/Dokploy, Railway, Fly.io and Render are prepared; Vercel, Netlify and Cloudflare
 Workers/Pages cannot run a persistent server with a disk.
 
-## Profiles
+## The image
 
-| `GL_PROFILE` | What you get |
-| --- | --- |
-| `core` | Browser app, owner login, agent API tokens, boards, media, HTML, video editor with export in your browser, AI providers with your keys |
-| `render` (default) | + server-side rendering (headless Chromium, ffmpeg): stills, previews and final videos for agents |
-| `full` | accepted alias of `render` (kept for existing configs) |
+`ghcr.io/wpsoul/greenlight-dash:<version>` (~4.3 GB — Chromium, its browser dependencies
+and ffmpeg are most of it). It runs the whole app: boards, media, HTML cards, the video
+editor, the agent API, AI providers with your keys, and server-side rendering — stills,
+previews and final videos for agents.
 
-Two images: the full one (`ghcr.io/wpsoul/greenlight-dash:<version>`, ~1 GB, Chromium) and
-a `core` one (`ghcr.io/wpsoul/greenlight-dash:<version>-core`, ~1.5 GB) for browser-only use with external
-agents.
+Rendering needs Chromium, ffmpeg and free disk; `GET /api/ready` reports each of them,
+and Settings ▸ Server shows the result. Routes that reach the host's filesystem, launch
+local applications or open a shell do not exist on a server at all.
 
 Rendering works on a CPU-only server (open-source Chromium, frames encoded by
 ffmpeg). Expect minutes, not seconds, for effect-heavy 1080p on a small VPS.
